@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ZenScreen — Digital Well-Being & Screen Time</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        :root {
+            --bg: #0D0F14;
+            --bg2: #151820;
+            --bg3: #1C2030;
+            --card: #1E2235;
+            --card2: #242840;
+            --border: #2A2F45;
+            --text: #F0F2FF;
+            --text2: #8B90B0;
+            --text3: #5A5F7A;
+            --accent: #7B68FF;
+            --accent2: #5B4FD9;
+            --green: #4ECCA3;
+            --amber: #FFB347;
+            --red: #FF6B6B;
+            --pink: #FF6B9D;
+            --r: 14px;
+            --r2: 10px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            min-height: 100dvh;
+            overflow-x: hidden
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            max-width: 390px;
+            margin: 0 auto;
+            min-height: 100dvh;
+            position: relative;
+            background: var(--bg)
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 80px
+        }
+
+        .page.active {
+            display: flex
+        }
+
+        /* Auth Pages */
+        .auth-page {
+            display: none;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-height: 100dvh;
+            padding: 0;
+            background: var(--bg)
+        }
+
+        .auth-page.active {
+            display: flex
+        }
+
+        .auth-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px 20px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .auth-hero-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(123, 104, 255, 0.15) 0%, transparent 70%)
+        }
+
+        .auth-orb {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(from 180deg, #7B68FF, #4ECCA3, #FFB347, #7B68FF);
+            opacity: 0.15;
+            filter: blur(40px);
+            position: absolute;
+            top: 20px
+        }
+
+        .auth-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 36px;
+            color: var(--text);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 8px
+        }
+
+        .auth-logo span {
+            color: var(--accent)
+        }
+
+        .auth-tagline {
+            color: var(--text2);
+            font-size: 13px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            line-height: 1.5;
+            max-width: 220px
+        }
+
+        .auth-card {
+            background: var(--bg2);
+            border-radius: 28px 28px 0 0;
+            padding: 28px 24px 40px;
+            border-top: 1px solid var(--border)
+        }
+
+        .auth-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px
+        }
+
+        .auth-subtitle {
+            color: var(--text2);
+            font-size: 13px;
+            margin-bottom: 24px
+        }
+
+        .field {
+            margin-bottom: 14px
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 6px;
+            font-weight: 500;
+            letter-spacing: .3px
+        }
+
+        .field input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--r2);
+            padding: 12px 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s
+        }
+
+        .field input:focus {
+            border-color: var(--accent)
+        }
+
+        .field input::placeholder {
+            color: var(--text3)
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            border: none;
+            border-radius: var(--r2);
+            padding: 14px;
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity .2s;
+            margin-top: 4px
+        }
+
+        .btn-primary:active {
+            opacity: .8
+        }
+
+        .btn-primary.sm {
+            padding: 10px;
+            font-size: 13px;
+            width: auto
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 16px;
+            color: var(--text2);
+            font-size: 13px
+        }
+
+        .auth-link a {
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: none
+        }
+
+        .forgot {
+            text-align: right;
+            font-size: 12px;
+            color: var(--accent);
+            cursor: pointer;
+            margin-top: -8px;
+            margin-bottom: 14px
+        }
+
+        /* Header */
+        .header {
+            padding: 16px 20px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0
+        }
+
+        .header-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px
+        }
+
+        .header-title span {
+            color: var(--accent)
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer
+        }
+
+        .back-btn {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--text2);
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: var(--r);
+            padding: 16px;
+            margin: 0 16px 12px;
+            border: 1px solid var(--border)
+        }
+
+        .card-sm {
+            background: var(--card);
+            border-radius: var(--r2);
+            padding: 12px;
+            border: 1px solid var(--border)
+        }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 12px
+        }
+
+        /* Big time display */
+        .big-time {
+            text-align: center;
+            padding: 20px 20px 16px
+        }
+
+        .big-time-label {
+            font-size: 12px;
+            color: var(--text2);
+            font-weight: 500;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            margin-bottom: 4px
+        }
+
+        .big-time-value {
+            font-family: 'DM Serif Display', serif;
+            font-size: 52px;
+            color: var(--text);
+            line-height: 1
+        }
+
+        .big-time-value span {
+            font-size: 24px;
+            color: var(--text2);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300
+        }
+
+        .big-time-sub {
+            font-size: 13px;
+            color: var(--text2);
+            margin-top: 4px
+        }
+
+        /* Progress ring */
+        .ring-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px
+        }
+
+        .ring-label {
+            font-size: 11px;
+            color: var(--text2);
+            font-weight: 500
+        }
+
+        /* Weekly chart */
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 80px;
+            padding-top: 8px
+        }
+
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px
+        }
+
+        .bar-wrap {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            border-radius: 4px 4px 0 0;
+            overflow: hidden
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: height .5s cubic-bezier(.4, 0, .2, 1);
+            cursor: pointer;
+            position: relative
+        }
+
+        .bar.today {
+            background: var(--accent)
+        }
+
+        .bar.normal {
+            background: var(--card2)
+        }
+
+        .bar.last {
+            background: var(--border)
+        }
+
+        .bar-day {
+            font-size: 10px;
+            color: var(--text3);
+            font-weight: 500
+        }
+
+        /* Insights */
+        .insight-chip {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--r2);
+            padding: 10px 12px;
+            margin: 0 16px 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px
+        }
+
+        .insight-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0
+        }
+
+        .insight-icon.green {
+            background: rgba(78, 204, 163, 0.15);
+            color: var(--green)
+        }
+
+        .insight-icon.amber {
+            background: rgba(255, 179, 71, 0.15);
+            color: var(--amber)
+        }
+
+        .insight-icon.purple {
+            background: rgba(123, 104, 255, 0.15);
+            color: var(--accent)
+        }
+
+        .insight-text {
+            font-size: 12px;
+            color: var(--text2);
+            line-height: 1.5
+        }
+
+        .insight-text strong {
+            color: var(--text);
+            font-weight: 500
+        }
+
+        /* App list */
+        .app-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .app-row:last-child {
+            border-bottom: none
+        }
+
+        .app-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0
+        }
+
+        .app-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .app-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text)
+        }
+
+        .app-time {
+            font-size: 11px;
+            color: var(--text2);
+            margin-top: 1px
+        }
+
+        .app-bar-wrap {
+            height: 4px;
+            background: var(--bg3);
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden
+        }
+
+        .app-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width .5s
+        }
+
+        .app-limit-badge {
+            font-size: 10px;
+            color: var(--accent);
+            background: rgba(123, 104, 255, 0.12);
+            border-radius: 6px;
+            padding: 3px 7px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            cursor: pointer
+        }
+
+        .app-limit-badge.over {
+            color: var(--red);
+            background: rgba(255, 107, 107, 0.12)
+        }
+
+        /* Week compare */
+        .compare-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .compare-row:last-child {
+            border-bottom: none
+        }
+
+        .compare-label {
+            font-size: 13px;
+            color: var(--text)
+        }
+
+        .compare-val {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .compare-val.up {
+            color: var(--red)
+        }
+
+        .compare-val.down {
+            color: var(--green)
+        }
+
+        /* Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 390px;
+            background: var(--bg2);
+            border-top: 1px solid var(--border);
+            display: flex;
+            z-index: 100;
+            padding: 8px 0 20px
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: opacity .15s
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px
+        }
+
+        .nav-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text3);
+            transition: color .15s
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--accent)
+        }
+
+        .nav-item.active .nav-icon {
+            filter: none
+        }
+
+        .nav-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            position: absolute;
+            bottom: 2px
+        }
+
+        /* Limits page */
+        .focus-modes {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px 12px;
+            overflow-x: auto;
+            scrollbar-width: none
+        }
+
+        .focus-modes::-webkit-scrollbar {
+            display: none
+        }
+
+        .focus-chip {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 7px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text2);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all .2s;
+            flex-shrink: 0
+        }
+
+        .focus-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .focus-active-card {
+            background: linear-gradient(135deg, rgba(123, 104, 255, 0.2), rgba(78, 204, 163, 0.1));
+            border: 1px solid var(--accent);
+            border-radius: var(--r);
+            padding: 16px;
+            margin: 0 16px 12px
+        }
+
+        .focus-timer {
+            font-family: 'DM Serif Display', serif;
+            font-size: 48px;
+            text-align: center;
+            color: var(--text);
+            line-height: 1
+        }
+
+        .focus-timer-sub {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text2);
+            margin-top: 4px
+        }
+
+        .btn-end-focus {
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: var(--red);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 12px;
+            width: 100%
+        }
+
+        .blocked-badge {
+            font-size: 10px;
+            color: var(--red);
+            background: rgba(255, 107, 107, 0.12);
+            border-radius: 5px;
+            padding: 2px 7px;
+            flex-shrink: 0
+        }
+
+        .toggle {
+            position: relative;
+            width: 42px;
+            height: 24px;
+            flex-shrink: 0
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--bg3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: .3s;
+            border: 1px solid var(--border)
+        }
+
+        .toggle-slider:before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background: var(--text2);
+            border-radius: 50%;
+            transition: .3s
+        }
+
+        .toggle input:checked+.toggle-slider {
+            background: var(--accent);
+            border-color: var(--accent)
+        }
+
+        .toggle input:checked+.toggle-slider:before {
+            transform: translateX(18px);
+            background: #fff
+        }
+
+        /* Chat page */
+        .chat-wrap {
+            flex: 1;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto
+        }
+
+        .msg {
+            max-width: 82%;
+            display: flex;
+            flex-direction: column;
+            gap: 3px
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            align-items: flex-end
+        }
+
+        .msg.bot {
+            align-self: flex-start;
+            align-items: flex-start
+        }
+
+        .bubble {
+            padding: 10px 13px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--text)
+        }
+
+        .msg.user .bubble {
+            background: var(--accent);
+            color: #fff;
+            border-radius: 14px 14px 4px 14px
+        }
+
+        .msg.bot .bubble {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px 14px 14px 4px
+        }
+
+        .msg-time {
+            font-size: 10px;
+            color: var(--text3)
+        }
+
+        .chat-input-wrap {
+            padding: 10px 16px 0;
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            border-top: 1px solid var(--border)
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            outline: none;
+            resize: none;
+            line-height: 1.4;
+            max-height: 80px
+        }
+
+        .chat-input::placeholder {
+            color: var(--text3)
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0
+        }
+
+        .typing-dots span {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background: var(--text2);
+            border-radius: 50%;
+            margin: 0 1px;
+            animation: bounce .8s infinite alternate
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: .2s
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: .4s
+        }
+
+        @keyframes bounce {
+            from {
+                transform: translateY(0)
+            }
+
+            to {
+                transform: translateY(-5px)
+            }
+        }
+
+        .compare-btns {
+            display: flex;
+            gap: 6px;
+            padding: 0 16px 10px;
+            overflow-x: auto;
+            scrollbar-width: none
+        }
+
+        .compare-btns::-webkit-scrollbar {
+            display: none
+        }
+
+        .cmp-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 5px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text2);
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: 'DM Sans', sans-serif
+        }
+
+        .cmp-btn.active {
+            background: rgba(78, 204, 163, 0.15);
+            border-color: var(--green);
+            color: var(--green)
+        }
+
+        /* Profile page */
+        .profile-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 16px;
+            gap: 10px
+        }
+
+        .profile-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Serif Display', serif;
+            font-size: 26px;
+            color: #fff
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: 600
+        }
+
+        .profile-email {
+            font-size: 12px;
+            color: var(--text2)
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0 16px 12px
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--r2);
+            padding: 12px;
+            border: 1px solid var(--border);
+            text-align: center
+        }
+
+        .stat-val {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text)
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--text2);
+            margin-top: 2px
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 16px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .setting-label {
+            font-size: 14px;
+            color: var(--text)
+        }
+
+        .setting-label span {
+            display: block;
+            font-size: 11px;
+            color: var(--text2);
+            margin-top: 2px
+        }
+
+        .settings-group {
+            background: var(--card);
+            border-radius: var(--r);
+            margin: 0 16px 12px;
+            overflow: hidden;
+            border: 1px solid var(--border)
+        }
+
+        .settings-group-title {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            padding: 8px 16px 4px
+        }
+
+        .logout-btn {
+            width: calc(100% - 32px);
+            margin: 4px 16px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.25);
+            border-radius: 10px;
+            padding: 13px;
+            color: var(--red);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer
+        }
+
+        /* Section header */
+        .section-header {
+            padding: 4px 16px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text)
+        }
+
+        .section-link {
+            font-size: 12px;
+            color: var(--accent);
+            cursor: pointer
+        }
+
+        /* Scroll area */
+        .scroll-area {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch
+        }
+
+        /* Limit modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center
+        }
+
+        .modal-overlay.open {
+            display: flex
+        }
+
+        .modal-sheet {
+            background: var(--bg2);
+            border-radius: 20px 20px 0 0;
+            padding: 20px 20px 40px;
+            width: 100%;
+            max-width: 390px;
+            border-top: 1px solid var(--border)
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 16px
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 16px
+        }
+
+        .time-select {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px
+        }
+
+        .time-chip {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 7px 14px;
+            font-size: 13px;
+            color: var(--text2);
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .time-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        /* Animation */
+        .fade-in {
+            animation: fadeIn .3s ease
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: var(--text);
+            z-index: 300;
+            display: none;
+            white-space: nowrap
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeIn .3s ease
+        }
+
+        /* Section spacing */
+        .spacer {
+            height: 8px
+        }
+
+        /* Chevron */
+        .chevron {
+            color: var(--text3);
+            font-size: 12px
+        }
+
+        /* Custom focus input */
+        #custom-focus-input input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--r2);
+            padding: 10px 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s
+        }
+
+        #custom-focus-input input:focus {
+            border-color: var(--accent)
+        }
+
+        /* Goal/Edit modal extras */
+        .goal-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px
+        }
+
+        .goal-chip {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 7px 14px;
+            font-size: 13px;
+            color: var(--text2);
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .goal-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff
+        }
+
+        .edit-field {
+            margin-bottom: 14px
+        }
+
+        .edit-field label {
+            display: block;
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 6px;
+            font-weight: 500
+        }
+
+        .edit-field input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--r2);
+            padding: 12px 14px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s
+        }
+
+        .edit-field input:focus {
+            border-color: var(--accent)
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app" id="app">
+
+        <!-- AUTH: Login -->
+        <div class="auth-page active" id="page-login">
+            <div class="auth-hero">
+                <div class="auth-hero-bg"></div>
+                <div class="auth-orb"></div>
+                <div class="auth-logo">Zen<span>Screen</span></div>
+                <div class="auth-tagline">Your mindful companion for digital balance and focus</div>
+            </div>
+            <div class="auth-card">
+                <div class="auth-title">Welcome back</div>
+                <div class="auth-subtitle">Sign in to your account</div>
+                <div class="field"><label>Email</label><input type="email" placeholder="you@example.com"
+                        id="login-email"></div>
+                <div class="field"><label>Password</label><input type="password" placeholder="••••••••" id="login-pw">
+                </div>
+                <div class="forgot" onclick="showPage('page-forgot')">Forgot password?</div>
+                <button class="btn-primary" onclick="doLogin()">Sign in</button>
+                <div class="auth-link">Don't have an account? <a onclick="showPage('page-signup')">Sign up</a></div>
+            </div>
+        </div>
+
+        <!-- AUTH: Signup -->
+        <div class="auth-page" id="page-signup">
+            <div class="auth-hero">
+                <div class="auth-hero-bg"></div>
+                <div class="auth-orb"></div>
+                <div class="auth-logo">Zen<span>Screen</span></div>
+                <div class="auth-tagline">Start your journey to digital wellness today</div>
+            </div>
+            <div class="auth-card">
+                <div class="auth-title">Create account</div>
+                <div class="auth-subtitle">Join thousands improving their digital habits</div>
+                <div class="field"><label>Full name</label><input type="text" placeholder="Your name" id="signup-name">
+                </div>
+                <div class="field"><label>Email</label><input type="email" placeholder="you@example.com"
+                        id="signup-email"></div>
+                <div class="field"><label>Password</label><input type="password" placeholder="Min. 8 characters"
+                        id="signup-pw"></div>
+                <div class="field"><label>Confirm password</label><input type="password" placeholder="Repeat password"
+                        id="signup-pw2"></div>
+                <button class="btn-primary" onclick="doSignup()">Create account</button>
+                <div class="auth-link">Already have an account? <a onclick="showPage('page-login')">Sign in</a></div>
+            </div>
+        </div>
+
+        <!-- AUTH: Forgot -->
+        <div class="auth-page" id="page-forgot">
+            <div class="auth-hero">
+                <div class="auth-hero-bg"></div>
+                <div class="auth-orb"></div>
+                <div class="auth-logo">Zen<span>Screen</span></div>
+                <div class="auth-tagline">We'll send you a reset link</div>
+            </div>
+            <div class="auth-card">
+                <div class="auth-title">Reset password</div>
+                <div class="auth-subtitle">Enter your email and we'll send instructions</div>
+                <div class="field"><label>Email</label><input type="email" placeholder="you@example.com"
+                        id="forgot-email"></div>
+                <button class="btn-primary" onclick="doForgot()">Send reset link</button>
+                <div class="auth-link"><a onclick="showPage('page-login')">← Back to sign in</a></div>
+            </div>
+        </div>
+
+        <!-- MAIN APP -->
+        <div class="page" id="page-home">
+            <div class="header">
+                <div class="header-title">Zen<span>Screen</span></div>
+                <div class="avatar" onclick="goProfile()">AL</div>
+            </div>
+
+            <!-- Today's time -->
+            <div class="card" style="margin-top:4px">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="flex:1">
+                        <div class="card-title">Today's screen time</div>
+                        <div id="today-time-val"
+                            style="font-family:'DM Serif Display',serif;font-size:44px;line-height:1;color:var(--text)">
+                            0<span
+                                style="font-size:20px;font-family:'DM Sans',sans-serif;color:var(--text2);font-weight:300">h</span>
+                            0<span
+                                style="font-size:20px;font-family:'DM Sans',sans-serif;color:var(--text2);font-weight:300">m</span>
+                        </div>
+                        <div style="font-size:11px;color:var(--green);margin-top:4px;font-weight:500" id="today-trend">Loading…
+                        </div>
+                    </div>
+                    <div class="ring-wrap">
+                        <svg width="72" height="72" viewBox="0 0 72 72">
+                            <circle cx="36" cy="36" r="28" fill="none" stroke="#2A2F45" stroke-width="6" />
+                            <circle id="ring-pct" cx="36" cy="36" r="28" fill="none" stroke="#7B68FF" stroke-width="6"
+                                stroke-dasharray="175.9" stroke-dashoffset="175.9" stroke-linecap="round"
+                                transform="rotate(-90 36 36)" />
+                            <text id="ring-txt" x="36" y="32" text-anchor="middle" fill="#F0F2FF" font-size="12" font-weight="600"
+                                font-family="DM Sans">0%</text>
+                            <text x="36" y="44" text-anchor="middle" fill="#8B90B0" font-size="8.5"
+                                font-family="DM Sans">of limit</text>
+                        </svg>
+                        <div class="ring-label" id="ring-label">Loading…</div>
+                    </div>
+                </div>
+                <!-- Mini progress bar -->
+                <div style="margin-top:12px">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                        <div style="font-size:11px;color:var(--text2)">Today's progress</div>
+                        <div id="today-bar-label" style="font-size:11px;color:var(--text2)">— / —</div>
+                    </div>
+                    <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden">
+                        <div id="today-bar"
+                            style="width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;transition:width 1s">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly chart -->
+            <div class="card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                    <div class="card-title" style="margin-bottom:0">This week vs last week</div>
+                    <div style="display:flex;gap:10px">
+                        <div style="display:flex;align-items:center;gap:4px">
+                            <div style="width:8px;height:8px;border-radius:2px;background:var(--accent)"></div>
+                            <div style="font-size:10px;color:var(--text2)">This week</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px">
+                            <div style="width:8px;height:8px;border-radius:2px;background:var(--border)"></div>
+                            <div style="font-size:10px;color:var(--text2)">Last week</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:flex-end;gap:5px;height:90px;padding-top:4px" id="week-chart">
+                </div>
+            </div>
+
+            <!-- AI Insights -->
+            <div class="section-header">
+                <div class="section-title">AI Insights</div>
+                <div
+                    style="font-size:10px;color:var(--accent);background:rgba(123,104,255,0.12);border-radius:10px;padding:2px 8px">
+                    ✦ Live</div>
+            </div>
+            <div class="insight-chip fade-in">
+                <div class="insight-icon green">↓</div>
+                <div class="insight-text"><strong>Great progress!</strong> Your screen time is 15% lower compared to
+                    last week. Keep it up!</div>
+            </div>
+            <div class="insight-chip fade-in" style="animation-delay:.1s">
+                <div class="insight-icon amber">!</div>
+                <div class="insight-text"><strong>Social media alert:</strong> You've exceeded your daily limit on
+                    Instagram by 32 minutes today.</div>
+            </div>
+            <div class="insight-chip fade-in" style="animation-delay:.2s">
+                <div class="insight-icon purple">✦</div>
+                <div class="insight-text"><strong>Milestone:</strong> Today is your 3rd consecutive day under your
+                    screen time goal. Streak alive!</div>
+            </div>
+
+            <!-- Most used apps -->
+            <div class="section-header" style="margin-top:4px">
+                <div class="section-title">Most used today</div>
+                <div class="section-link" onclick="switchTab('limits')">Set limits →</div>
+            </div>
+            <div class="card">
+                <div id="app-list-home"></div>
+            </div>
+            <div class="spacer"></div>
+        </div>
+
+        <!-- LIMITS PAGE -->
+        <div class="page" id="page-limits">
+            <div class="header">
+                <div class="header-title" style="font-size:20px">Safety & <span>Limits</span></div>
+            </div>
+
+            <!-- Focus mode -->
+            <div class="section-header">
+                <div class="section-title">Focus mode</div>
+                <div id="focus-status" style="font-size:11px;color:var(--text3)">Off</div>
+            </div>
+
+            <div id="focus-select-area">
+                <div class="focus-modes" id="focus-chips">
+                    <div class="focus-chip" onclick="selectFocus(15,this)">15 min</div>
+                    <div class="focus-chip" onclick="selectFocus(30,this)">30 min</div>
+                    <div class="focus-chip" onclick="selectFocus(60,this)">1 hour</div>
+                    <div class="focus-chip" onclick="selectFocus(120,this)">2 hours</div>
+                    <div class="focus-chip" onclick="selectFocus('custom',this)">Custom</div>
+                </div>
+                <div id="custom-focus-input" style="display:none;padding:0 16px 8px">
+                    <div style="margin-bottom:0"><label style="display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500">Duration (minutes)</label><input type="number" id="custom-mins" placeholder="e.g. 45" min="5" max="480" value="45" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></div>
+                </div>
+                <div style="padding:0 16px 12px">
+                    <button class="btn-primary" style="padding:12px" onclick="startFocus()">Start focus mode</button>
+                </div>
+            </div>
+
+            <div id="focus-active-area" style="display:none">
+                <div class="focus-active-card">
+                    <div
+                        style="text-align:center;font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">
+                        Focus mode active</div>
+                    <div class="focus-timer" id="focus-timer-display">00:30:00</div>
+                    <div class="focus-timer-sub">Stay focused — you've got this!</div>
+                    <div
+                        style="height:4px;background:rgba(123,104,255,0.2);border-radius:2px;margin:12px 0 0;overflow:hidden">
+                        <div id="focus-progress-bar"
+                            style="height:100%;background:var(--accent);border-radius:2px;width:100%;transition:width 1s linear">
+                        </div>
+                    </div>
+                    <button class="btn-end-focus" onclick="endFocus()">End focus early</button>
+                </div>
+            </div>
+
+            <!-- App limits -->
+            <div class="section-header">
+                <div class="section-title">App limits</div>
+                <div class="section-link">Manage all</div>
+            </div>
+            <div class="card" id="app-limits-list"></div>
+            <div class="spacer"></div>
+        </div>
+
+        <!-- ANALYTICS PAGE -->
+        <div class="page" id="page-analytics">
+            <div class="header">
+                <div class="header-title">Data <span>Analytics</span></div>
+            </div>
+            
+            <div class="section-header">
+                <div class="section-title">Today's App Usage</div>
+            </div>
+            <div class="card" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+                <canvas id="usageDoughnutChart" width="300" height="300"></canvas>
+            </div>
+
+            <div class="section-header" style="margin-top: 10px;">
+                <div class="section-title">Weekly Trend (Minutes)</div>
+            </div>
+            <div class="card" style="padding: 20px;">
+                <canvas id="trendLineChart" width="300" height="200"></canvas>
+            </div>
+            <div class="spacer"></div>
+        </div>
+
+        <!-- CHAT PAGE -->
+        <div class="page" id="page-chat" style="padding-bottom:0">
+            <div class="header" style="border-bottom:1px solid var(--border);padding-bottom:12px">
+                <div>
+                    <div class="header-title" style="font-size:18px">AI <span>Coach</span></div>
+                    <div style="font-size:11px;color:var(--green);margin-top:1px">● Online</div>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-size:11px;color:var(--text2)">Compare</div>
+                </div>
+            </div>
+            <div class="compare-btns">
+                <div class="cmp-btn active" onclick="setCompare('day',this)">Today vs Yesterday</div>
+                <div class="cmp-btn" onclick="setCompare('week',this)">This week vs Last</div>
+                <div class="cmp-btn" onclick="setCompare('month',this)">This month vs Last</div>
+            </div>
+            <div id="compare-card" style="margin:0 16px 10px"></div>
+            <div class="chat-wrap" id="chat-messages"></div>
+            <div class="chat-input-wrap" style="padding-bottom:80px">
+                <textarea class="chat-input" id="chat-input" placeholder="Ask about your screen habits..." rows="1"
+                    onkeydown="chatKeydown(event)"></textarea>
+                <button class="send-btn" onclick="sendChat()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- PROFILE PAGE -->
+        <div class="page" id="page-profile">
+            <div class="header">
+                <div class="header-title">My <span>Profile</span></div>
+            </div>
+            <div class="profile-hero">
+                <div class="profile-avatar">AL</div>
+                <div>
+                    <div class="profile-name">Alex Lee</div>
+                    <div class="profile-email">alex.lee@email.com</div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:4px">
+                    <div class="streak-badge"
+                        style="background:rgba(78,204,163,0.12);border:1px solid rgba(78,204,163,0.25);border-radius:16px;padding:4px 12px;font-size:11px;color:var(--green);font-weight:500">
+                        0-day streak 🔥</div>
+                    <div
+                        style="background:rgba(123,104,255,0.12);border:1px solid rgba(123,104,255,0.25);border-radius:16px;padding:4px 12px;font-size:11px;color:var(--accent);font-weight:500">
+                        ZenScreen</div>
+                </div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div id="stat-today" class="stat-val" style="color:var(--green)">—</div>
+                    <div class="stat-lbl">Today's usage</div>
+                </div>
+                <div class="stat-card">
+                    <div id="stat-vs" class="stat-val" style="color:var(--accent)">—</div>
+                    <div class="stat-lbl">vs Last week</div>
+                </div>
+                <div class="stat-card">
+                    <div id="stat-week" class="stat-val">—</div>
+                    <div class="stat-lbl">This week total</div>
+                </div>
+                <div class="stat-card">
+                    <div id="stat-streak" class="stat-val" style="color:var(--amber)">—</div>
+                    <div class="stat-lbl">Day streak</div>
+                </div>
+            </div>
+
+            <div class="settings-group-title">Preferences</div>
+            <div class="settings-group">
+                <div class="setting-row" onclick="openDailyGoalModal()" style="cursor:pointer">
+                    <div class="setting-label">Daily goal<span>Set your target screen time</span></div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <div id="daily-goal-display" style="font-size:13px;color:var(--accent);font-weight:500">6h</div>
+                        <div class="chevron">›</div>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-label">Notifications<span>Alerts when limits are reached</span></div>
+                    <label class="toggle"><input type="checkbox" id="pref-notifications" checked>
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-label">Bedtime mode<span>Limit usage after 10 PM</span></div>
+                    <label class="toggle"><input type="checkbox" id="pref-bedtime" checked>
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-label">Weekly report<span>Every Monday morning</span></div>
+                    <label class="toggle"><input type="checkbox" id="pref-weekly">
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-group-title">Account</div>
+            <div class="settings-group">
+                <div class="setting-row" style="cursor:pointer" onclick="openEditProfile()">
+                    <div class="setting-label">Edit profile</div>
+                    <div class="chevron">›</div>
+                </div>
+                <div class="setting-row" style="cursor:pointer" onclick="openChangePassword()">
+                    <div class="setting-label">Change password</div>
+                    <div class="chevron">›</div>
+                </div>
+                <div class="setting-row" style="cursor:pointer" onclick="showToast('Privacy settings coming soon')">
+                    <div class="setting-label">Privacy settings</div>
+                    <div class="chevron">›</div>
+                </div>
+                <div class="setting-row" style="cursor:pointer" onclick="exportData()">
+                    <div class="setting-label">Export my data</div>
+                    <div class="chevron">›</div>
+                </div>
+            </div>
+            <div class="spacer"></div>
+            <button class="logout-btn" onclick="doLogout()">Sign out</button>
+            <div class="spacer"></div>
+            <div class="spacer"></div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav" id="bottom-nav" style="display:none">
+            <div class="nav-item active" onclick="switchTab('home')" id="nav-home">
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                </div>
+                <div class="nav-label">Home</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('limits')" id="nav-limits">
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                    </svg>
+                </div>
+                <div class="nav-label">Limits</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('chat')" id="nav-chat">
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                </div>
+                <div class="nav-label">Coach</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('profile')" id="nav-profile">
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="nav-label">Profile</div>
+            </div>
+            <div class="nav-item" onclick="switchTab('analytics')" id="nav-analytics">
+                <div class="nav-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                    </svg>
+                </div>
+                <div class="nav-label">Stats</div>
+            </div>
+        </nav>
+
+        <!-- Limit Modal -->
+        <div class="modal-overlay" id="limit-modal" onclick="closeModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-handle"></div>
+                <div class="modal-title" id="modal-app-name">Set limit for Instagram</div>
+                <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Current usage: <strong
+                        id="modal-current" style="color:var(--text)">1h 45m</strong></div>
+                <div style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">Daily limit</div>
+                <div class="time-select" id="modal-time-chips">
+                    <div class="time-chip" onclick="selectTime(30,this)">30 min</div>
+                    <div class="time-chip" onclick="selectTime(60,this)">1 hour</div>
+                    <div class="time-chip active" onclick="selectTime(90,this)">1.5 hours</div>
+                    <div class="time-chip" onclick="selectTime(120,this)">2 hours</div>
+                    <div class="time-chip" onclick="selectTime(180,this)">3 hours</div>
+                </div>
+                <button class="btn-primary" onclick="saveLimit()">Save limit</button>
+                <button
+                    style="width:100%;background:none;border:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:8px;padding:6px"
+                    onclick="document.getElementById('limit-modal').classList.remove('open')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+
+        <!-- Daily Goal Modal -->
+        <div class="modal-overlay" id="goal-modal" onclick="closeGoalModal(event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-handle"></div>
+                <div class="modal-title">Set daily goal</div>
+                <div style="font-size:13px;color:var(--text2);margin-bottom:12px">How many hours of screen time per day?</div>
+                <div class="goal-chips" id="goal-chips">
+                    <div class="goal-chip" onclick="selectGoal(3,this)">3h</div>
+                    <div class="goal-chip" onclick="selectGoal(4,this)">4h</div>
+                    <div class="goal-chip" onclick="selectGoal(5,this)">5h</div>
+                    <div class="goal-chip active" onclick="selectGoal(6,this)">6h</div>
+                    <div class="goal-chip" onclick="selectGoal(7,this)">7h</div>
+                    <div class="goal-chip" onclick="selectGoal(8,this)">8h</div>
+                </div>
+                <button class="btn-primary" onclick="saveGoal()">Save goal</button>
+                <button style="width:100%;background:none;border:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:8px;padding:6px" onclick="document.getElementById('goal-modal').classList.remove('open')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div class="modal-overlay" id="edit-profile-modal" onclick="this.classList.remove('open')">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-handle"></div>
+                <div class="modal-title">Edit profile</div>
+                <div class="edit-field"><label>Full name</label><input type="text" id="edit-name" placeholder="Your name"></div>
+                <div class="edit-field"><label>Email</label><input type="email" id="edit-email" placeholder="you@example.com"></div>
+                <button class="btn-primary" onclick="saveProfile()">Save changes</button>
+                <button style="width:100%;background:none;border:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:8px;padding:6px" onclick="document.getElementById('edit-profile-modal').classList.remove('open')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div class="modal-overlay" id="password-modal" onclick="this.classList.remove('open')">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-handle"></div>
+                <div class="modal-title">Change password</div>
+                <div class="edit-field"><label>Current password</label><input type="password" id="pw-current" placeholder="••••••••"></div>
+                <div class="edit-field"><label>New password</label><input type="password" id="pw-new" placeholder="Min. 8 characters"></div>
+                <div class="edit-field"><label>Confirm new password</label><input type="password" id="pw-confirm" placeholder="Repeat password"></div>
+                <button class="btn-primary" onclick="savePassword()">Update password</button>
+                <button style="width:100%;background:none;border:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:8px;padding:6px" onclick="document.getElementById('password-modal').classList.remove('open')">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
