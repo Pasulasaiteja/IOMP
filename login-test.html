@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenScreen — Login Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0D0F14; color: #F0F2FF; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .card { background: #1E2235; border-radius: 16px; padding: 32px; width: 100%; max-width: 380px; }
+    h1 { font-size: 22px; margin-bottom: 6px; color: #7B68FF; }
+    p { font-size: 12px; color: #8B90B0; margin-bottom: 24px; word-break: break-all; }
+    label { font-size: 13px; color: #8B90B0; display: block; margin-bottom: 4px; }
+    input { width: 100%; background: #13151E; border: 1px solid #2A2F45; border-radius: 10px; padding: 12px 14px; color: #F0F2FF; font-size: 15px; margin-bottom: 14px; outline: none; }
+    button { width: 100%; background: #7B68FF; border: none; border-radius: 10px; padding: 14px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
+    button.sec { background: #2A2F45; }
+    #status { margin-top: 16px; background: #13151E; border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; min-height: 80px; color: #4ECCA3; }
+    #status.error { color: #FF6B6B; }
+    .api-url { font-size: 11px; color: #5A5F7A; margin-bottom: 16px; padding: 8px 12px; background: #13151E; border-radius: 8px; word-break: break-all; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>🔧 Login Diagnostic</h1>
+  <p>This page bypasses service workers and tests the login API directly.</p>
+
+  <div class="api-url" id="api-display">Detecting API URL...</div>
+
+  <label>Email</label>
+  <input type="email" id="email" value="test@test.com" placeholder="email@example.com">
+
+  <label>Password</label>
+  <input type="password" id="pw" value="" placeholder="Your password">
+
+  <button onclick="testHealth()">1. Test Server Health</button>
+  <button onclick="testRegister()" class="sec">2. Register New Account</button>
+  <button onclick="testLogin()">3. Login</button>
+
+  <div id="status">Waiting for test...</div>
+</div>
+
+<script>
+  // Auto-detect the right API URL
+  const API = window.location.origin + '/api';
+  document.getElementById('api-display').textContent = '🌐 API: ' + API;
+
+  function setStatus(msg, isError = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = isError ? 'error' : '';
+  }
+
+  async function testHealth() {
+    setStatus('Testing health...');
+    try {
+      const r = await fetch(window.location.origin + '/health');
+      const d = await r.json();
+      setStatus('✅ Server is ONLINE!\n' + JSON.stringify(d, null, 2));
+    } catch(e) {
+      setStatus('❌ Cannot reach server!\n' + e.message, true);
+    }
+  }
+
+  async function testRegister() {
+    const email = document.getElementById('email').value;
+    const pw = document.getElementById('pw').value;
+    if (!email || !pw) { setStatus('❌ Fill in email and password first', true); return; }
+    setStatus('Registering...');
+    try {
+      const r = await fetch(API + '/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'TestUser', email, password: pw })
+      });
+      const d = await r.json();
+      if (r.ok) {
+        setStatus('✅ Registered!\nToken: ' + d.token.substring(0, 30) + '...\nUser: ' + JSON.stringify(d.user));
+      } else {
+        setStatus('⚠️ Server error ' + r.status + ':\n' + JSON.stringify(d), true);
+      }
+    } catch(e) {
+      setStatus('❌ NETWORK ERROR — Request never reached server!\n\nError: ' + e.message + '\n\nThis means the phone cannot reach the server at:\n' + API, true);
+    }
+  }
+
+  async function testLogin() {
+    const email = document.getElementById('email').value;
+    const pw = document.getElementById('pw').value;
+    if (!email || !pw) { setStatus('❌ Fill in email and password first', true); return; }
+    setStatus('Logging in...');
+    try {
+      const r = await fetch(API + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pw })
+      });
+      const d = await r.json();
+      if (r.ok) {
+        setStatus('✅ LOGIN SUCCESS!\nToken: ' + d.token.substring(0, 40) + '...\nUser: ' + JSON.stringify(d.user, null, 2));
+      } else {
+        setStatus('⚠️ Login failed (server responded):\n' + JSON.stringify(d, null, 2), true);
+      }
+    } catch(e) {
+      setStatus('❌ NETWORK ERROR — Request never reached server!\n\nError: ' + e.message + '\n\nAPI URL used: ' + API + '/auth/login', true);
+    }
+  }
+
+  // Auto-test health on load
+  testHealth();
+</script>
+</body>
+</html>

@@ -39,22 +39,27 @@ All 6 phases delivered and verified:
 - Phase 5: AI Integration ✅
 - Phase 6: Frontend Integration ✅
 
-## Milestone 2: Advanced Features — 🎯 IN PROGRESS
+## Milestone 2: Advanced Features — ✅ COMPLETE
 - Phase 7: Real-time tracking simulation — **✅ PLAN EXECUTED** (5/5 tasks complete)
 - Phase 8: Data Visualization — **✅ PLAN EXECUTED**
-- Phase 9: PWA Transformation — (Waiting for Phase 9)
+- Phase 9: PWA Transformation — **✅ PLAN EXECUTED** (Service workers, manifest, offline detection)
+
+## Milestone 3: Native Mobile Apps — 🎯 IN PROGRESS
+- Phase 10: Capacitor Android Integration — **✅ PLAN EXECUTED** (Generated Android platform, injected bridge)
+- Phase 11: Real OS-level Tracking & App Blocking — **✅ PLAN EXECUTED** (Implemented `TrackingService`, `BlockedScreenActivity`, `AppBlockerPlugin`, requested `PACKAGE_USAGE_STATS` & `POST_NOTIFICATIONS`)
+- Phase 12: Production Build & Testing — (Next step: Compile and verify on physical Android device)
 
 ## Recent Decisions
-- Switched from Anthropic to Google Gemini for AI Coaching based on user accessibility.
-- Using `sql.js` (pure JavaScript SQLite) instead of better-sqlite3 for better portability and simpler setup.
-- Kept the frontend as a single `app.html` to maintain portability, while splitting the backend into clean routes.
-- Added real Gemini API key to `.env` — Phase 5 fully operational ✅
+- Successfully bridged the PWA into a Native Android APK using Capacitor.
+- Developed a native Android `TrackingService` to read real screen time data via `UsageStatsManager`.
+- Built a native `AppBlockerPlugin` to intercept social apps during Focus Mode and enforce per-app time limits by throwing up a full-screen `BlockedScreenActivity`.
+- Updated API URLs in the build process to target physical device local network IPs (e.g., `192.168.1.104`) instead of `localhost`.
+- Configured Android Network Security Config to allow cleartext traffic for local development testing.
 
 ## Known Blockers
-- **No Rate Limiting**: Consider adding before production deployment.
-- **Real OS-level Tracking**: Phase 7 uses simulated background tracking; native app (Kotlin/Swift) required for actual OS tracking.
+- None currently. Waiting for manual compilation and test on a physical Android device.
 
-## Next Steps (Milestone 2: Advanced Features)
-1. Phase 7: Real-time tracking simulation (PWA Background tasks)
-2. Phase 8: Data Visualization (D3.js or Chart.js for advanced trends)
-3. Phase 9: PWA Transformation (Service Workers, Offline support, Installable)
+## Next Steps (Milestone 3: Native Mobile Apps)
+1. Compile the APK in Android Studio and deploy to physical device.
+2. Verify all runtime permissions (Usage Access, Battery Optimization, Notifications, Camera).
+3. Test Focus Mode blocking and App Limit blocking natively on the device.

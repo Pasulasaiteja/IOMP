@@ -57,19 +57,33 @@ router.put('/screentime', async (req, res) => {
 // POST /api/data/screentime/bulk
 router.post('/screentime/bulk', async (req, res) => {
   try {
-    const { entries } = req.body;
+    const { entries, replace } = req.body;
     if (!Array.isArray(entries)) return res.status(400).json({ error: 'entries array required.' });
     const db = await getDb();
+    const today = new Date().toISOString().slice(0, 10);
+
+    // When replace=true (native app), delete ALL existing screen_time for
+    // this user+date first.  This wipes stale mock data from browser testing.
+    if (replace) {
+      const date = entries[0]?.date || today;
+      run(db, 'DELETE FROM screen_time WHERE user_id = ? AND date = ?', [req.userId, date]);
+      console.log('[Bulk] Cleared old screen_time for user', req.userId, 'on', date);
+    }
+
+    let inserted = 0;
     for (const row of entries) {
-      if (row.appName && row.minutes != null) {
+      if (row.appName && row.minutes != null && row.minutes > 0) {
         run(db, `
           INSERT INTO screen_time (user_id, date, app_name, minutes) VALUES (?, ?, ?, ?)
           ON CONFLICT(user_id, date, app_name) DO UPDATE SET minutes = excluded.minutes
-        `, [req.userId, row.date || new Date().toISOString().slice(0, 10), row.appName, row.minutes]);
+        `, [req.userId, row.date || today, row.appName, row.minutes]);
+        inserted++;
       }
     }
-    res.json({ success: true, count: entries.length });
+    console.log('[Bulk] Inserted', inserted, 'screen_time records for user', req.userId);
+    res.json({ success: true, count: inserted });
   } catch (err) {
+    console.error('[Bulk] Error:', err);
     res.status(500).json({ error: 'Bulk insert failed.' });
   }
 });

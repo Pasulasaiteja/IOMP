@@ -3,7 +3,22 @@
 
 <head>
     <title>ZenScreen — Digital Well-Being & Screen Time</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Your mindful companion for digital balance. Track screen time, set limits, and build healthier phone habits with AI coaching.">
+    <meta name="theme-color" content="#7B68FF">
+    <meta name="background-color" content="#0D0F14">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ZenScreen">
+    <meta name="application-name" content="ZenScreen">
+    <meta name="msapplication-TileColor" content="#7B68FF">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+    <link rel="apple-touch-icon" href="/icon-512.png">
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap"
         rel="stylesheet">
@@ -208,6 +223,25 @@
             padding: 10px;
             font-size: 13px;
             width: auto
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: var(--r2);
+            transition: opacity .2s, background .2s;
+        }
+
+        .btn-icon:active {
+            opacity: 0.7
+        }
+
+        .btn-icon:disabled {
+            opacity: 0.5;
+            cursor: not-allowed
         }
 
         .auth-link {
@@ -447,6 +481,26 @@
         .insight-text strong {
             color: var(--text);
             font-weight: 500
+        }
+
+        /* AI Insights List */
+        #ai-insights-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 0 16px;
+            margin-bottom: 12px
+        }
+
+        #ai-insights-list li {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r2);
+            padding: 10px 12px;
+            font-size: 12px;
+            color: var(--text2);
+            line-height: 1.5;
+            list-style: none
         }
 
         /* App list */
@@ -1210,6 +1264,157 @@
         .edit-field input:focus {
             border-color: var(--accent)
         }
+
+        /* PWA Install Banner */
+        .pwa-install-banner {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 358px;
+            background: linear-gradient(135deg, rgba(123, 104, 255, 0.25), rgba(78, 204, 163, 0.15));
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            padding: 16px;
+            z-index: 250;
+            display: none;
+            animation: slideUp .4s cubic-bezier(.4,0,.2,1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .pwa-install-banner.show { display: block; }
+
+        .pwa-install-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .pwa-install-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .pwa-install-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .pwa-install-desc {
+            font-size: 12px;
+            color: var(--text2);
+            margin-top: 2px;
+        }
+
+        .pwa-install-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pwa-install-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: opacity .2s;
+        }
+
+        .pwa-install-btn.primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .pwa-install-btn.secondary {
+            background: var(--bg3);
+            color: var(--text2);
+            border: 1px solid var(--border);
+        }
+
+        /* Offline Indicator */
+        .offline-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, #FF6B6B, #FF6B9D);
+            color: #fff;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px;
+            z-index: 400;
+            display: none;
+            animation: slideDown .3s ease;
+        }
+
+        .offline-bar.show { display: block; }
+
+        /* Update Available Bar */
+        .update-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, var(--accent), var(--green));
+            color: #fff;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 8px;
+            z-index: 400;
+            display: none;
+            cursor: pointer;
+            animation: slideDown .3s ease;
+        }
+
+        .update-bar.show { display: block; }
+
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(30px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* Safe area insets for Android notch/rounded corners */
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        .bottom-nav {
+            padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+        }
+
+        /* Standalone mode adjustments */
+        @media (display-mode: standalone) {
+            .header {
+                padding-top: max(16px, env(safe-area-inset-top));
+            }
+            .auth-hero {
+                padding-top: max(40px, calc(env(safe-area-inset-top) + 20px));
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -1284,7 +1489,10 @@
         <div class="page" id="page-home">
             <div class="header">
                 <div class="header-title">Zen<span>Screen</span></div>
-                <div class="avatar" onclick="goProfile()">AL</div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn-icon" id="btn-refresh-home" onclick="refreshHomeData()" title="Sync screen time data from phone">🔄</button>
+                    <div class="avatar" onclick="goProfile()">AL</div>
+                </div>
             </div>
 
             <!-- Today's time -->
@@ -1356,6 +1564,17 @@
                     style="font-size:10px;color:var(--accent);background:rgba(123,104,255,0.12);border-radius:10px;padding:2px 8px">
                     ✦ Live</div>
             </div>
+
+            <!-- AI Summary Card -->
+            <div class="card" style="background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; margin: 0 16px 12px;">
+                <div style="font-size: 11px; color: var(--text2); font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Daily Summary</div>
+                <div id="ai-summary" style="font-size: 13px; color: var(--text); line-height: 1.5;">Analyzing your usage...</div>
+            </div>
+
+            <!-- AI Insights List -->
+            <div id="ai-insights-list" style="display: flex; flex-direction: column; gap: 8px; padding: 0 16px; margin-bottom: 12px;"></div>
+
+            <!-- Static Insight Chips (fallback) -->
             <div class="insight-chip fade-in">
                 <div class="insight-icon green">↓</div>
                 <div class="insight-text"><strong>Great progress!</strong> Your screen time is 15% lower compared to
@@ -1654,6 +1873,7 @@
                     <div class="time-chip" onclick="selectTime(180,this)">3 hours</div>
                 </div>
                 <button class="btn-primary" onclick="saveLimit()">Save limit</button>
+                <button class="btn-primary" style="background:rgba(255, 107, 107, 0.1); color:var(--red); margin-top:8px; display:none;" onclick="removeLimit()" id="btn-remove-limit">Remove limit</button>
                 <button
                     style="width:100%;background:none;border:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:8px;padding:6px"
                     onclick="document.getElementById('limit-modal').classList.remove('open')">Cancel</button>
@@ -1708,6 +1928,62 @@
         </div>
 
     </div>
+
+    <!-- PWA Offline Indicator -->
+    <div class="offline-bar" id="offline-bar">📡 You're offline — data will sync when reconnected</div>
+
+    <!-- PWA Update Available Bar -->
+    <div class="update-bar" id="update-bar" onclick="applyUpdate()">🔄 Update available — tap to refresh</div>
+
+    <!-- PWA Install Banner -->
+    <div class="pwa-install-banner" id="pwa-install-banner">
+        <div class="pwa-install-header">
+            <div class="pwa-install-icon">🧘</div>
+            <div>
+                <div class="pwa-install-title">Install ZenScreen</div>
+                <div class="pwa-install-desc">Add to home screen for the full app experience</div>
+            </div>
+        </div>
+        <div class="pwa-install-actions">
+            <button class="pwa-install-btn secondary" onclick="dismissInstallBanner()">Not now</button>
+            <button class="pwa-install-btn primary" onclick="installPWA()">Install</button>
+        </div>
+    </div>
+
+    <!-- Cache buster: forces phone to get fresh app.js after code changes -->
+    <script>
+    (function() {
+      var CURRENT_VERSION = 'v9-lan-fix';
+      var stored = localStorage.getItem('zs_code_version');
+      if (stored !== CURRENT_VERSION) {
+        console.log('[CacheBust] Version mismatch, clearing all caches...');
+        localStorage.setItem('zs_code_version', CURRENT_VERSION);
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            regs.forEach(function(r) { r.unregister(); console.log('[CacheBust] Unregistered SW'); });
+          });
+        }
+        if ('caches' in window) {
+          caches.keys().then(function(names) {
+            names.forEach(function(n) { caches.delete(n); console.log('[CacheBust] Deleted cache:', n); });
+          });
+        }
+        // Reload after a brief delay to let cleanup finish
+        setTimeout(function() { window.location.reload(true); }, 500);
+        return; // Stop loading app.js on this round
+      }
+    })();
+    </script>
+    <style>
+      #toast {
+        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(100px);
+        background: #333; color: #fff; padding: 12px 24px; border-radius: 8px;
+        opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9999;
+        font-family: sans-serif; font-size: 14px; pointer-events: none;
+      }
+      #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+    <div id="toast"></div>
     <script src="app.js"></script>
 </body>
 

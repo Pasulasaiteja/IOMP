@@ -1,0 +1,58 @@
+{
+  "name": "ZenScreen — Digital Well-Being",
+  "short_name": "ZenScreen",
+  "description": "Your mindful companion for digital balance. Track screen time, set limits, and build healthier phone habits with AI coaching.",
+  "start_url": "/app.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0F14",
+  "theme_color": "#7B68FF",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["health", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Today's Stats",
+      "short_name": "Stats",
+      "description": "View today's screen time",
+      "url": "/app.html#home",
+      "icons": []
+    },
+    {
+      "name": "AI Coach",
+      "short_name": "Coach",
+      "description": "Chat with your AI wellness coach",
+      "url": "/app.html#chat",
+      "icons": []
+    },
+    {
+      "name": "Focus Mode",
+      "short_name": "Focus",
+      "description": "Start a focus session",
+      "url": "/app.html#limits",
+      "icons": []
+    }
+  ],
+  "permissions": [
+    "notifications",
+    "background-sync",
+    "periodic-background-sync",
+    "storage"
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
+}

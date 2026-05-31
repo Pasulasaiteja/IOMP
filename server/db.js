@@ -49,6 +49,7 @@ async function getDb() {
       date        TEXT    NOT NULL,
       app_name    TEXT    NOT NULL,
       minutes     INTEGER NOT NULL DEFAULT 0,
+      timestamp   INTEGER NOT NULL DEFAULT (strftime('%s','now') * 1000),
       UNIQUE(user_id, date, app_name)
     );
 
@@ -58,7 +59,35 @@ async function getDb() {
       bedtime_mode      INTEGER NOT NULL DEFAULT 1,
       weekly_report     INTEGER NOT NULL DEFAULT 0
     );
+
+    CREATE TABLE IF NOT EXISTS notification_log (
+      id                INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id           INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      type              TEXT NOT NULL,
+      fired_at          TEXT NOT NULL DEFAULT (datetime('now')),
+      date              TEXT NOT NULL DEFAULT (date('now')),
+      UNIQUE(user_id, type, date)
+    );
   `);
+
+  // ─── Migrations ────────────────────────────────────────────────────────────
+  // Add `timestamp` column to screen_time if it was created without it.
+  // (CREATE TABLE IF NOT EXISTS never alters an existing table.)
+  const screenTimeCols = _db.exec("PRAGMA table_info(screen_time)");
+  if (screenTimeCols.length > 0) {
+    const colNames = screenTimeCols[0].values.map(row => row[1]); // column: name
+    if (!colNames.includes('timestamp')) {
+      console.log('[DB] Migrating screen_time: adding timestamp column...');
+      _db.run(
+        "ALTER TABLE screen_time ADD COLUMN timestamp INTEGER NOT NULL DEFAULT 0"
+      );
+      // Back-fill existing rows with current epoch ms so they sort correctly
+      _db.run(
+        "UPDATE screen_time SET timestamp = (CAST(strftime('%s','now') AS INTEGER) * 1000) WHERE timestamp = 0"
+      );
+      console.log('[DB] Migration complete.');
+    }
+  }
 
   save();
   return _db;
