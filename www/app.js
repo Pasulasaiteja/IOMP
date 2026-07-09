@@ -5,7 +5,7 @@
 // Browser dev:      Uses localhost:3001 (the dev server running on the PC).
 // LAN access:       Uses the current origin (e.g. http://192.168.x.x:3001).
 
-let API = 'http://172.20.10.4:3001/api';  // Default for native app pointing to dev server
+let API = 'https://iomp-nz4u.onrender.com/api';  // Default for native app pointing to dev server
 
 if (!window.Capacitor || !window.Capacitor.isNative) {
   // Running in a browser
